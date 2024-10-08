@@ -77,14 +77,14 @@ def compute_nonconformity(model, x_calib, y_calib):
     probs = model.predict(x_calib)
  
     # Get the true class probabilities
-    calib_scores = 1 - np.array([probs[i, y_calib[i]] for i in range(len(y_calib))])
+    class_prob = np.array([probs[i, y_calib[i]] for i in range(len(y_calib))])
     
-    return calib_scores
+    return class_prob
 
 # Calculate nonconformity scores
-nonconformity_scores = compute_nonconformity(model, x_calib, y_calib)
+class_probs = compute_nonconformity(model, x_calib, y_calib)
 
-def conformal_prediction(model, x_test, calib_scores, alpha=0.1):
+def conformal_prediction(model, x_test, calib_scores, alpha=90):
     """
     Perform conformal prediction and return the set of labels that belong to the 
     confidence set, i.e., labels with p-values greater than alpha.
@@ -94,18 +94,13 @@ def conformal_prediction(model, x_test, calib_scores, alpha=0.1):
     calib_scores: nonconformity scores from the calibration set
     alpha: significance level (e.g., 0.1)
     """
+    quantile = np.quantile(calib_scores, 1-(int(alpha)/100))
     # Get softmax probabilities for the test image
     probs_test = model.predict(x_test)
-    #print(probs_test)
-    # Calculate p-values for each class
-    p_values = []
-    for class_idx in range(probs_test.shape[1]):
-        nonconformity_test = 1 - probs_test[:, class_idx]
-        p_value = np.mean(nonconformity_test >= calib_scores)
-        p_values.append(p_value)
+    prediction_sets = [np.where(probs_test[i] >= quantile)[0] for i in range(len(x_test))]
 
     # Return classes with p-values greater than alpha
-    return [i for i, p in enumerate(p_values) if p <= (1-float(alpha))]
+    return prediction_sets
 
 
 ################################################
@@ -114,6 +109,7 @@ def conformal_prediction(model, x_test, calib_scores, alpha=0.1):
 from lime import lime_image
 import matplotlib.pyplot as plt
 
+from skimage.segmentation import mark_boundaries
 # Create a LIME image explainer
 explainer = lime_image.LimeImageExplainer()
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
@@ -139,18 +135,20 @@ def lime(image):
     test_image = test_image.astype('float32') / 255.0 
     predicted_class = model.predict(np.expand_dims(test_image, axis=0)).argmax()
     # Explain the prediction
-    explanation = explainer.explain_instance(test_image, 
-                                         model.predict, 
-                                         top_labels=5, 
-                                         hide_color=255, 
-                                         num_samples=100)
+    explanation = explainer.explain_instance(test_image, model.predict, top_labels=5, hide_color=255, num_samples=100)
 
 # Get the image and mask
-    temp, mask = explanation.get_image_and_mask(predicted_class, 
-                                             positive_only=True, 
-                                             num_features=10, 
-                                             hide_rest=True)
-    return temp
+    temp, mask = explanation.get_image_and_mask(predicted_class, positive_only=True, num_features=10,  hide_rest=True)
+    # Create LIME image explainer
+    # explainer = lime_image.LimeImageExplainer()
+
+# Generate explanation
+    # explanation = explainer.explain_instance(test_image, model.predict, top_labels=5, hide_color=0, num_samples=100)
+
+# Visualize the explanation
+    # temp, mask = explanation.get_image_and_mask(predicted_class, positive_only=True, num_features=5, hide_rest=True)
+    return mark_boundaries(temp / 2 + 0.5, mask)
+   #  return temp
 
 ################################################
 # Gradio interface setup
@@ -166,10 +164,10 @@ def process_image_and_float(image, value):
     img_resized = tf.image.resize(image, (180, 180))
     img = np.expand_dims(img_resized, axis=0)
     print(img.shape)
-    confidence_set = conformal_prediction(model, img, nonconformity_scores, alpha=value)
+    confidence_set = conformal_prediction(model, img, class_probs, alpha=value)
     print(confidence_set)
     classes =[]
-    for i in confidence_set:
+    for i in confidence_set[0]:
         classes.append(labels[i])
     print(classes)
     return classes or "None"
@@ -179,22 +177,21 @@ def process_image_and_float(image, value):
 import gradio as gr
 
 
-def get_tensor_from_image_path(image_path, target_size=(180,180)):
-    # Load the image
-    image = load_img(image_path, target_size=target_size)
-    # Convert the image to a NumPy array
-    image_array = img_to_array(image)
-    # Normalize the image array (optional, depending on your model's requirements)
-    image_array = image_array.astype('float32') / 255.0  # Scale to [0, 1]
-    # Convert to tensor
-    image_tensor = tf.convert_to_tensor(image_array)
-    # Add a batch dimension (required for models)
-    image_tensor = tf.expand_dims(image_tensor, axis=0)
-    return image_tensor
+def validate_input(text):
+    try:
+        # Convert input to an integer
+        value = int(text)
+        # Check if the value is between 1 and 10
+        if 1 <= value <= 100:
+            return True, value
+        else:
+            return False, "Invalid input. Please enter a number between 1 and 10."
+    except ValueError:
+        return False, "Invalid input. Please enter a number between 1 and 10."
 
 example_images = "/Users/gokulgopank/Documents/deploy/Skin cancer ISIC The International Skin Imaging Collaboration/Test/melanoma/ISIC_0000004.jpg"
 # Create the interface
-with gr.Blocks(css=css) as demo:
+with gr.Blocks() as demo:
     gr.Markdown("## Image Classification with conformal prediction and LIME")
     # Shared image input for all rows
     with gr.Row():
@@ -216,18 +213,30 @@ with gr.Blocks(css=css) as demo:
     # Row 2: Image input and text input to text output
     with gr.Row():
         
-        text_input = gr.Textbox(label="Enter Text")
-        generate_button = gr.Button("Generate Text")
-        text_output = gr.Textbox(label="Generated Text")
-        generate_button.click(process_image_and_float, inputs=[image_input, text_input], outputs=text_output)
+        text_input = gr.Textbox(label="Enter a number between 1 and 100",scale=1)
+        generate_button = gr.Button("Generate Text",scale =0.5)
+        text_output = gr.Textbox(label="Generated Text",scale=3)
+
+    def handle_generate(image, text):
+        is_valid, message = validate_input(text)
+        if not is_valid:
+            return message  # Return the error message to the output
+        else:
+            # Call your processing function if input is valid
+            return process_image_and_float(image, text)
+
+    generate_button.click(handle_generate, inputs=[image_input, text_input], outputs=text_output)    
+       #  generate_button.click(process_image_and_float, inputs=[image_input, text_input], outputs=text_output)
     
     with gr.Row():
         gr.Markdown("## LIME")
 
     # Row 3: Image input to image output
     with gr.Row():
-        transform_button = gr.Button("Transform Image",elem_classes="feedback",scale=0.5)
-        image_output = gr.Image(label="Transformed Image", type="pil",scale=1.5)
+        transform_button = gr.Button("Transform Image")
+
+    with gr.Row():
+        image_output = gr.Image(label="Transformed Image", type="pil")
         transform_button.click(lime, inputs=image_input, outputs=image_output)
 
 # Define the CSS for the button size
@@ -236,3 +245,4 @@ with gr.Blocks(css=css) as demo:
 
 # Launch the interface
 demo.launch()
+
