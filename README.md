@@ -1,13 +1,20 @@
-https://drive.google.com/drive/folders/1PPTN_-cNo5r-kBZOW1zGrXsGh0UZMHjs?usp=share_link
+Create a file with a .sh extension, for example, my_script.sh.
 
-gdown --folder "https://drive.google.com/drive/folders/1PPTN_-cNo5r-kBZOW1zGrXsGh0UZMHjs"
+Add your commands to the file, one per line:
+#!/bin/bash
+echo "Starting the process..."
+cd /path/to/your/directory
+pip install -r requirements.txt
+python your_script.py
+echo "Process completed."
+
+Make the script executable:
+chmod +x my_script.sh
+
+Run the script:
+./my_script.sh
 
 
-
-File
-https://drive.google.com/file/d/1A2B3C4D5EF6G7/view?usp=sharing
-
-gdown "https://drive.google.com/uc?id=1A2B3C4D5EF6G7"
 
  mkdir hell  
  cd hell
