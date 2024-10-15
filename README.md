@@ -14,7 +14,7 @@ gdown "https://drive.google.com/uc?id=1A2B3C4D5EF6G7"
  python -m venv .venv   
  source .venv/bin/activate
 
-git clone this repo
+git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git
 cd CNN-melanoma-detection
 pip install -r requirements.txt
 pip install gdown
