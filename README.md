@@ -9,8 +9,18 @@ https://drive.google.com/file/d/1A2B3C4D5EF6G7/view?usp=sharing
 
 gdown "https://drive.google.com/uc?id=1A2B3C4D5EF6G7"
 
+ mkdir hell  
+ cd hell
+ python -m venv .venv   
+ source .venv/bin/activate
 
+git clone this repo
+cd CNN-melanoma-detection
+pip install -r requirements.txt
+pip install gdown
+gdown --folder "https://drive.google.com/drive/folders/1PPTN_-cNo5r-kBZOW1zGrXsGh0UZMHjs"
 
+https://drive.google.com/drive/folders/1PPTN_-cNo5r-kBZOW1zGrXsGh0UZMHjs?usp=share_link
 # CNN_melanoma_detection
 # Melanoma-Detection
 
