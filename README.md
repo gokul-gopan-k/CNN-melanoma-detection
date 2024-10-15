@@ -1,3 +1,16 @@
+https://drive.google.com/drive/folders/1PPTN_-cNo5r-kBZOW1zGrXsGh0UZMHjs?usp=share_link
+
+gdown --folder "https://drive.google.com/drive/folders/1PPTN_-cNo5r-kBZOW1zGrXsGh0UZMHjs"
+
+
+
+File
+https://drive.google.com/file/d/1A2B3C4D5EF6G7/view?usp=sharing
+
+gdown "https://drive.google.com/uc?id=1A2B3C4D5EF6G7"
+
+
+
 # CNN_melanoma_detection
 # Melanoma-Detection
 
