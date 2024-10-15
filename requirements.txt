@@ -86,3 +86,7 @@ uvicorn==0.31.1
 websockets==12.0
 Werkzeug==3.0.4
 wrapt==1.16.0
+
+https://drive.google.com/file/d/1A2B3C4D5EF6G7/view?usp=sharing
+
+gdown "https://drive.google.com/uc?id=1A2B3C4D5EF6G7"
