@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 from keras.models import load_model
 
 # Load the saved model
-model = load_model('model_final.keras')
+model = load_model("melanoma_files/model_final.keras")
 
 # Load the model and check if it was loaded successfully
 #model_filename = os.getenv('MODEL_FILENAME', 'model_filename.pkl')
@@ -60,8 +60,8 @@ def classify_image(img_path):
 
 #Conformal prediction
 
-x= np.load('tensor_x.npy')
-y = np.load('tensor_y.npy')
+x= np.load('melanoma_files/tensor_x.npy')
+y = np.load('melanoma_files/tensor_y.npy')
 
 # Convert to a TensorFlow tensor
 x_calib = tf.convert_to_tensor(x)
@@ -201,7 +201,7 @@ with gr.Blocks() as demo:
     with gr.Row():
         with gr.Column():
             image_input = gr.Image(label="Upload or Select Image", type="pil")
-            example_images = ["sample_images/ISIC_0000002.jpg","sample_images/ISIC_0000004.jpg","/Users/gokulgopank/Documents/Skin_1/sample_images/ISIC_0000013.jpg"]
+            example_images = ["melanoma_files/sample_images/ISIC_0000002.jpg","melanoma_files/sample_images/ISIC_0000004.jpg","melanoma_files/sample_images/ISIC_0000013.jpg"]
 
         # Add examples to the image input
             gr.Examples(examples=example_images, inputs=image_input)
