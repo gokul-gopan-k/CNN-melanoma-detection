@@ -9,16 +9,20 @@ import logging
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from keras.models import load_model
+
+# Load the saved model
+model = load_model('model_final.keras')
 
 # Load the model and check if it was loaded successfully
-model_filename = os.getenv('MODEL_FILENAME', 'model_filename.pkl')
+#model_filename = os.getenv('MODEL_FILENAME', 'model_filename.pkl')
 
-try:
-    model = joblib.load(model_filename)
-    logging.info(f"Model loaded successfully from {model_filename}.")
-except Exception as e:
-    logging.error(f"Failed to load model from {model_filename}: {e}")
-    raise
+#try:
+#    model = joblib.load(model_filename)
+#    logging.info(f"Model loaded successfully from {model_filename}.")
+#except Exception as e:
+ #   logging.error(f"Failed to load model from {model_filename}: {e}")
+#    raise
 
 # Define the labels
 labels = [
@@ -189,7 +193,7 @@ def validate_input(text):
     except ValueError:
         return False, "Invalid input. Please enter a number between 1 and 10."
 
-example_images = "/Users/gokulgopank/Documents/deploy/Skin cancer ISIC The International Skin Imaging Collaboration/Test/melanoma/ISIC_0000004.jpg"
+#example_images = "/Users/gokulgopank/Documents/deploy/Skin cancer ISIC The International Skin Imaging Collaboration/Test/melanoma/ISIC_0000004.jpg"
 # Create the interface
 with gr.Blocks() as demo:
     gr.Markdown("## Image Classification with conformal prediction and LIME")
@@ -197,7 +201,7 @@ with gr.Blocks() as demo:
     with gr.Row():
         with gr.Column():
             image_input = gr.Image(label="Upload or Select Image", type="pil")
-            example_images = ["/Users/gokulgopank/Documents/deploy/Skin cancer ISIC The International Skin Imaging Collaboration/Test/melanoma/ISIC_0000004.jpg","/Users/gokulgopank/Documents/deploy/Skin cancer ISIC The International Skin Imaging Collaboration/Test/melanoma/ISIC_0000002.jpg"]
+            example_images = ["sample_images/ISIC_0000002.jpg","sample_images/ISIC_0000004.jpg","/Users/gokulgopank/Documents/Skin_1/sample_images/ISIC_0000013.jpg"]
 
         # Add examples to the image input
             gr.Examples(examples=example_images, inputs=image_input)
