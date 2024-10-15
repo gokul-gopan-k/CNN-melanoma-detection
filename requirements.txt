@@ -1,1 +1,3 @@
 joblib
+gradio
+tensorflow
