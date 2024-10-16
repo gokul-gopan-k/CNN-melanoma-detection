@@ -5,10 +5,10 @@ git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git
 cd CNN-melanoma-detection
 
 Make the script executable:
-chmod +x my_script.sh
+chmod +x script.sh
 
 Run the script:
-./my_script.sh
+./script.sh
 
 python3 app.py
 
