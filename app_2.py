@@ -112,7 +112,7 @@ def process_image_and_float(image, value):
 
     img_resized = tf.image.resize(image, (180, 180))
     img = np.expand_dims(img_resized, axis=0)
-    confidence_set = conformal_prediction(model, img, class_probs, alpha=value)
+    confidence_set = conformal_prediction(model, img, class_probs, conf_level=value)
     classes =[]
     for i in confidence_set[0]:
         classes.append(labels[i])
@@ -127,9 +127,9 @@ def validate_input(text):
         if 1 <= value <= 100:
             return True, value
         else:
-            return False, "Invalid input. Please enter a number between 1 and 10."
+            return False, "Invalid input. Please enter a number between 1 and 100."
     except ValueError:
-        return False, "Invalid input. Please enter a number between 1 and 10."
+        return False, "Invalid input. Please enter a number between 1 and 100."
 
 
 # Create the interface
