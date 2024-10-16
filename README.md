@@ -1,12 +1,8 @@
-Create a file with a .sh extension, for example, my_script.sh.
+python -m venv .venv   
+source .venv/bin/activate
 
-Add your commands to the file, one per line:
-#!/bin/bash
-echo "Starting the process..."
-cd /path/to/your/directory
-pip install -r requirements.txt
-python your_script.py
-echo "Process completed."
+git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git
+cd CNN-melanoma-detection
 
 Make the script executable:
 chmod +x my_script.sh
@@ -14,20 +10,13 @@ chmod +x my_script.sh
 Run the script:
 ./my_script.sh
 
+python3 app.py
 
 
- mkdir hell  
- cd hell
- python -m venv .venv   
- source .venv/bin/activate
 
-git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git
-cd CNN-melanoma-detection
-pip install -r requirements.txt
-pip install gdown
-gdown --folder "https://drive.google.com/drive/folders/1PPTN_-cNo5r-kBZOW1zGrXsGh0UZMHjs"
 
-https://drive.google.com/drive/folders/1PPTN_-cNo5r-kBZOW1zGrXsGh0UZMHjs?usp=share_link
+
+
 # CNN_melanoma_detection
 # Melanoma-Detection
 
