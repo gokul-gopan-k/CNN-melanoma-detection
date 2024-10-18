@@ -1,18 +1,18 @@
 ## How to run app interface
 * Creare virtual environment
-```python -m venv .venv   
-source .venv/bin/activate```
+```python -m venv .venv ```  
+```source .venv/bin/activate ```
+* Clone the repo
+```git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git```
+```cd CNN-melanoma-detection```
 
-git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git
-cd CNN-melanoma-detection
+*Make the script executable:
+```chmod +x script.sh```
 
-Make the script executable:
-chmod +x script.sh
-
-Run the script:
-./script.sh
-
-python3 app.py
+*Run the script:
+```./script.sh```
+*Run the app
+```python3 app.py```
 
 
 
