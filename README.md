@@ -5,6 +5,7 @@
 ```source .venv/bin/activate ```
 
 * Clone the repo
+  
 ```git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git```
 
 ```cd CNN-melanoma-detection```
