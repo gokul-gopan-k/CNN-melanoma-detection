@@ -1,5 +1,7 @@
-python -m venv .venv   
-source .venv/bin/activate
+## How to run app interface
+* Creare virtual environment
+```python -m venv .venv   
+source .venv/bin/activate```
 
 git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git
 cd CNN-melanoma-detection
