@@ -6,12 +6,12 @@
 ```git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git```
 ```cd CNN-melanoma-detection```
 
-*Make the script executable:
+* Make the script executable:
 ```chmod +x script.sh```
 
-*Run the script:
+* Run the script:
 ```./script.sh```
-*Run the app
+* Run the app
 ```python3 app.py```
 
 
