@@ -1,6 +1,6 @@
 ## How to run app interface
 * Creare virtual environment
-  
+  https://www.kaggle.com/code/warcoder/classifying-infant-cry-type/notebook
 ```python -m venv .venv ```  
 ```source .venv/bin/activate ```
 
