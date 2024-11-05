@@ -2,7 +2,10 @@
 * Creare virtual environment
   https://www.kaggle.com/code/warcoder/classifying-infant-cry-type/notebook
   https://www.kaggle.com/code/aaradhyabadal/heart-beat-audio-anomaly-classification
-```python -m venv .venv ```  
+
+  https://paperswithcode.com/dataset/ksof
+  https://cs.paperswithcode.com/paper/nips4bplus-a-richly-annotated-birdsong-audio
+```python3 -m venv .venv ```  
 ```source .venv/bin/activate ```
 
 * Clone the repo
