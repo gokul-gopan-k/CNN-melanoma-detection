@@ -1,5 +1,10 @@
 ## How to run app interface
 * Creare virtual environment
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+then run 3 commands at end
+brew install ffmpeg
+
+
 
   [sound-of-114-species-of-birds-till-2022.zip](https://www.kaggle.com/code/soumendraprasad/guide-to-audio-processing-fe-with-birds-sounds)
   https://www.kaggle.com/code/warcoder/classifying-infant-cry-type/notebook
