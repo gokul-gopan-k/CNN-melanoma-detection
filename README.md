@@ -5,6 +5,10 @@
 
   https://paperswithcode.com/dataset/ksof
   https://cs.paperswithcode.com/paper/nips4bplus-a-richly-annotated-birdsong-audio
+
+  download kaggle data
+  1)pip install kaggle
+  2)kaggle datasets download -d soumendraprasad/sound-of-114-species-of-birds-till-2022
 ```python3 -m venv .venv ```  
 ```source .venv/bin/activate ```
 
