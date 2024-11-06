@@ -1,21 +1,6 @@
 ## How to run app interface
 * Creare virtual environment
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-then run 3 commands at end
-brew install ffmpeg
 
-
-
-  [sound-of-114-species-of-birds-till-2022.zip](https://www.kaggle.com/code/soumendraprasad/guide-to-audio-processing-fe-with-birds-sounds)
-  https://www.kaggle.com/code/warcoder/classifying-infant-cry-type/notebook
-  https://www.kaggle.com/code/aaradhyabadal/heart-beat-audio-anomaly-classification
-
-  https://paperswithcode.com/dataset/ksof
-  https://cs.paperswithcode.com/paper/nips4bplus-a-richly-annotated-birdsong-audio
-
-  download kaggle data
-  1)pip install kaggle
-  2)kaggle datasets download -d soumendraprasad/sound-of-114-species-of-birds-till-2022
 ```python3 -m venv .venv ```  
 ```source .venv/bin/activate ```
 
