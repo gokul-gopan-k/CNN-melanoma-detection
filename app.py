@@ -40,37 +40,14 @@ def classify_image(image):
         # Predict the class probabilities
         predictions = model.predict(img_preprocessed).flatten()
         logging.info(f"Prediction made: {predictions}")
-
+        output = {LABELS[i]: float(predictions[i]) for i in range(len(LABELS))}
+        label = max(output, key=output.get)
+        desp, fat, can, act = analysis(label)
         # Return a dictionary with class probabilities
-        return {LABELS[i]: float(predictions[i]) for i in range(len(LABELS))}
+        return  label, output, desp, fat, can, act
     except Exception as e:
         logging.error(f"Error during image classification: {e}")
         return {label: 0.0 for label in LABELS}
-
-def compute_nonconformity(model, x_calib, y_calib):
-    """Compute nonconformity scores for calibration data."""
-    try:
-        probs = model.predict(x_calib)
-        class_probs = np.array([probs[i, y_calib[i]] for i in range(len(y_calib))])
-        logging.info("Nonconformity scores computed successfully.")
-        return class_probs
-    except Exception as e:
-        logging.error(f"Error computing nonconformity scores: {e}")
-        return np.array([])
-
-# Calculate nonconformity scores
-calib_scores = compute_nonconformity(model, x_calib, y_calib)
-
-def conformal_prediction(model, x_test, calib_scores, conf_level=90):
-    """Generate conformal prediction sets based on the given confidence level."""
-    try:
-        quantile = np.quantile(calib_scores, 1 - (conf_level / 100))
-        probs_test = model.predict(x_test)
-        prediction_sets = [np.where(probs_test[i] >= quantile)[0] for i in range(len(x_test))]
-        return prediction_sets
-    except Exception as e:
-        logging.error(f"Error during conformal prediction: {e}")
-        return []
 
 def lime_explanation(image):
     """Generate a LIME explanation for the uploaded image."""
@@ -88,44 +65,76 @@ def lime_explanation(image):
         )
 
         # Extract image and mask
-        temp, mask = explanation.get_image_and_mask(predicted_class, positive_only=True, num_features=10, hide_rest=True)
-        return mark_boundaries(temp / 2 + 0.5, mask)
+        temp, mask = explanation.get_image_and_mask(predicted_class, positive_only=True, num_features=5, hide_rest=True)
+        #return features in image
+        return temp
     except Exception as e:
         logging.error(f"Error during LIME explanation: {e}")
         return np.zeros((180, 180, 3))  # Return a blank image on error
+    
 
-def process_image_and_confidence(image, conf_level):
-    """Process image and provide class predictions based on confidence level."""
-    try:
-        # Validate and convert the confidence level input
-        conf_level = int(conf_level)
-        if not 1 <= conf_level <= 100:
-            return "Invalid input. Please enter a number between 1 and 100."
+def analysis(disease_id):
+    if disease_id == "actinic keratosis":
+        desp = "A precancerous, rough, scaly patch on the skin, often caused by sun damage. Common in fair-skinned individuals."
+        fat = "Typically non-fatal, but can progress to squamous cell carcinoma (SCC) if untreated."
+        can = "Potentially cancerous or precancerous"
+        act = "Early treatment is recommended to prevent progression. Options include cryotherapy (freezing), topical treatments (e.g., 5-fluorouracil), or minor surgical removal."
+    elif disease_id == "basal cell carcinoma":
+        desp = "A common form of skin cancer that originates in the basal cells. Appears as a pearly or waxy bump, often on sun-exposed areas like the face or neck.."
+        fat = "Rarely fatal, but it can be locally invasive and cause significant tissue damage if untreated."
+        can = "Potentially cancerous or precancerous"
+        act = "Surgical removal is typically required. Other options include Mohs surgery, topical treatments, or radiation."
+    elif disease_id == "dermatofibroma":
+        desp = "A benign, firm, brownish skin growth that often appears on the legs or arms. Not associated with cancer."
+        fat = "Not fatal, non-cancerous."
+        can = "Non-cancerous (benign)"
+        act = "No treatment necessary unless it becomes irritated or bothersome. In some cases, it may be surgically excised."
+    elif disease_id == "melanoma":
+        desp = "A dangerous and aggressive form of skin cancer that arises from melanocytes (pigment-producing cells). It can appear as a new mole or change in an existing mole."
+        fat = "High potential for fatality if not detected and treated early. It is the deadliest form of skin cancer."
+        can = "Potentially cancerous or precancerous"
+        act = "Immediate consultation with a dermatologist is critical. Treatment often involves surgical excision, and in some cases, immunotherapy or chemotherapy may be necessary."
+    elif disease_id == "nevus":
+        desp = "A benign growth of melanocytes, often pigmented, commonly appearing as a mole. Most nevi are harmless, but some may develop into melanoma."
+        fat = "Usually benign and not fatal, though some can transform into melanoma over time."
+        can = "Non-cancerous (benign)"
+        act = "Regular monitoring for changes in size, shape, or color. If any suspicious changes occur, a biopsy may be recommended."
+    elif disease_id == "pigmented benign keratosis":
+        desp = "A benign, darkly pigmented skin growth, often appearing as a flat or slightly elevated patch. Typically associated with sun exposure and aging."
+        fat = "Non-cancerous and not fatal."
+        can = "Non-cancerous (benign)"
+        act = "No treatment required unless it becomes irritated. Removal may be considered for cosmetic reasons."
+    elif disease_id == "seborrheic keratosis":
+        desp = "A common, non-cancerous skin tumor that appears as a waxy, raised, and often pigmented lesion. It is associated with aging."
+        fat = "Not fatal, non-cancerous."
+        can = "Non-cancerous (benign)"
+        act = "Usually not necessary to treat unless they become itchy or irritated. Removal can be done for cosmetic reasons or if they interfere with daily activities."
+    elif disease_id == "squamous cell carcinoma":
+        desp = "A type of skin cancer that arises from squamous cells. It often presents as a scaly, red patch or ulcer that doesn't heal. It is more common in people with prolonged sun exposure."
+        fat = "Can be fatal if left untreated, especially if it spreads to other parts of the body (metastasizes)."
+        can = "Potentially cancerous or precancerous"
+        act = "Early surgical excision is typically recommended. In some cases, radiation therapy or chemotherapy may be needed."
+    elif disease_id == "vascular lesion":
+        desp = "Abnormal growth of blood vessels, which can appear as red, purple, or blue marks on the skin (e.g., spider veins, cherry angiomas, or hemangiomas). Most are benign."
+        fat = "Not fatal, typically benign."
+        can = "Non-cancerous (benign)"
+        act = "Treatment is usually not necessary unless they cause cosmetic concern or other symptoms like bleeding. Laser therapy can be used for cosmetic purposes or to remove larger lesions."
+    else:
+        print("Error: Invalid disease")
+        return
+    return desp, fat, can, act
 
-        img_resized = tf.image.resize(image, (180, 180))
-        img_preprocessed = np.expand_dims(img_resized, axis=0)
-
-        # Get conformal prediction sets
-        confidence_set = conformal_prediction(model, img_preprocessed, calib_scores, conf_level)
-        classes = [LABELS[i] for i in confidence_set[0]]
-
-        return classes if classes else "None"
-    except ValueError:
-        return "Invalid input. Please enter a valid number between 1 and 100."
-    except Exception as e:
-        logging.error(f"Error during confidence-based prediction: {e}")
-        return "An error occurred during processing."
 
 # Gradio interface setup
 with gr.Blocks() as demo:
-    gr.Markdown("## Image Classification with Conformal Prediction and LIME")
+    gr.Markdown("## Melanoma detection from skin images")
 
     with gr.Row():
         with gr.Column():
             image_input = gr.Image(label="Upload or Select Image", type="pil")
             example_images = [
-                "melanoma_files/sample_images/ISIC_0000002.jpg",
-                "melanoma_files/sample_images/ISIC_0000004.jpg",
+                "melanoma_files/sample_images/ISIC_0026171.jpg",
+                "melanoma_files/sample_images/ISIC_0026349.jpg",
                 "melanoma_files/sample_images/ISIC_0000013.jpg"
             ]
             gr.Examples(examples=example_images, inputs=image_input)
@@ -133,19 +142,21 @@ with gr.Blocks() as demo:
         with gr.Column():
             classify_button = gr.Button("Classify")
             label_output = gr.Label(num_top_classes=3, label="Top Classes")
-            classify_button.click(classify_image, inputs=image_input, outputs=label_output)
-
-    gr.Markdown("## Conformal Prediction")
-
+            predicted_label_output = gr.Textbox(label="Predicted Skin disease")
+    
     with gr.Row():
-        text_input = gr.Textbox(label="Enter a confidence number between 1 and 100", scale=1)
-        generate_button = gr.Button("Get Classes", scale=0.5)
-        text_output = gr.Textbox(label="Generated Classes", scale=3)
-
-        generate_button.click(process_image_and_confidence, inputs=[image_input, text_input], outputs=text_output)
-
-    gr.Markdown("## LIME Explanation")
-
+        desp = gr.Textbox(label="Disease description")
+    with gr.Row():
+        fat = gr.Textbox(label="Fatality")
+    with gr.Row():
+        can = gr.Textbox(label="Cancerous or not")
+    with gr.Row():
+        act = gr.Textbox(label="Course of action")
+    with gr.Row():
+        gr.Markdown("<h6 style='text-align: center;'>For any suspicious skin lesion or changes, it’s essential to consult a dermatologist promptly. Regular skin checks and early intervention can significantly reduce risks. </h6>")
+    classify_button.click(classify_image, inputs=image_input, outputs=[predicted_label_output, label_output, desp, fat, can, act])
+    with gr.Row():
+        gr.Markdown("## LIME Explanation")
     with gr.Row():
         lime_button = gr.Button("Get LIME Output")
         image_output = gr.Image(label="Influential Parts of the Image", type="pil")
