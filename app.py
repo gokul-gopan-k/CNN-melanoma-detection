@@ -124,14 +124,23 @@ def analysis(disease_id):
         return
     return desp, fat, can, act
 
-
+custom_css = """
+body {
+    background-color: white !important;
+}
+.image-container img {
+    max-width: 150px !important;
+    max-height: 150px !important;
+    object-fit: cover;
+}
+"""
 # Gradio interface setup
-with gr.Blocks() as demo:
+with gr.Blocks(css=custom_css) as demo:
     gr.Markdown("## Melanoma detection from skin images")
 
     with gr.Row():
         with gr.Column():
-            image_input = gr.Image(label="Upload or Select Image", type="pil")
+            image_input = gr.Image(label="Upload or Select Image", type="pil",elem_classes=["image-container"])
             example_images = [
                 "melanoma_files/sample_images/ISIC_0026171.jpg",
                 "melanoma_files/sample_images/ISIC_0026349.jpg",
@@ -146,11 +155,9 @@ with gr.Blocks() as demo:
     
     with gr.Row():
         desp = gr.Textbox(label="Disease description")
-    with gr.Row():
         fat = gr.Textbox(label="Fatality")
     with gr.Row():
         can = gr.Textbox(label="Cancerous or not")
-    with gr.Row():
         act = gr.Textbox(label="Course of action")
     with gr.Row():
         gr.Markdown("<h6 style='text-align: center;'>For any suspicious skin lesion or changes, it’s essential to consult a dermatologist promptly. Regular skin checks and early intervention can significantly reduce risks. </h6>")
