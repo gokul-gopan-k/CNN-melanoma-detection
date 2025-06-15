@@ -11,7 +11,7 @@ or
 
 ```cd CNN-melanoma-detection```
 
-* Make the script executable:
+* Make the script executable:(run in git bash for windows)
   
 ```chmod +x script.sh```
 
