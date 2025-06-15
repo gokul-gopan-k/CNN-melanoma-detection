@@ -3,7 +3,8 @@
 
 ```python -m venv .venv ```  
 ```source .venv/bin/activate ```
-
+or
+```.venv\Scripts\Activate.ps1```
 * Clone the repo
   
 ```git clone https://github.com/gokul-gopan-k/CNN-melanoma-detection.git```
